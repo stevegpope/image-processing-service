@@ -4,7 +4,7 @@
 
 resource "aws_lambda_function" "processor" {
   function_name = "${var.project}-processor"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.processor_role.arn
   handler       = "org.poe.ProcessImageHandler::handleRequest"
   runtime       = "java17"
   timeout       = 30
@@ -35,7 +35,7 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
 resource "aws_lambda_function" "upload" {
   function_name = "${var.project}-upload"
 
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.upload_role.arn
 
   runtime = "java17"
 
@@ -74,7 +74,7 @@ resource "aws_lambda_function" "upload" {
 resource "aws_lambda_function" "download" {
   function_name = "${var.project}-download"
 
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.download_role.arn
 
   runtime = "java17"
 
@@ -113,7 +113,7 @@ resource "aws_lambda_function" "download" {
 resource "aws_lambda_function" "status" {
   function_name = "${var.project}-status"
 
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.status_role.arn
 
   runtime = "java17"
 
