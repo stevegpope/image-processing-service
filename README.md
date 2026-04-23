@@ -29,3 +29,6 @@ This approach has several benefits:
 * Compute: AWS Lambda
 * Storage: Amazon S3
 * Messaging: Amazon SQS
+
+## Sample Image
+![Sample Image](./test/comparison.jpg)
