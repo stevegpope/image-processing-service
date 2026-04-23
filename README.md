@@ -30,6 +30,15 @@ This approach has several benefits:
 * Storage: Amazon S3
 * Messaging: Amazon SQS
 
+---
+## Observability
+
+* Failure Notifications: We use CloudWatch Alarms to immediately flag if the image processor crashes or if messages are piling up in the Dead Letter Queue (DLQ).
+* Proactive Alerting: By monitoring the Errors metric and ApproximateNumberOfMessagesVisible, we know the system has failed before the user even reports it.
+* Log Governance: Dedicated Log Groups for each Lambda function provide deep visibility into execution flow, with a 3-day retention policy to keep CloudWatch costs low while still allowing for effective debugging.
+* Structured Context: Using the custom InvocationContext in our Java code, we ensure every log entry is searchable by imageId (our correlationId), making it easy to trace a single file's journey from upload to completion.
+
+---
 ## Image Editing Process
 Nothing too fancy, it is just a tech demo.
 - adjust the intensity range of the image
