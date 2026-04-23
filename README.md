@@ -30,5 +30,12 @@ This approach has several benefits:
 * Storage: Amazon S3
 * Messaging: Amazon SQS
 
+## Image Editing Process
+Nothing too fancy, it is just a tech demo.
+- adjust the intensity range of the image
+- adjust the image brightness/contrast by stretching pixels so 0.35% of them become pure black or white
+- recalculate the display boundaries to ensure the new contrast levels are visible in the final file.
+- increases the value of every single pixel by 15% to globally brighten the image
+
 ## Sample Image
 ![Sample Image](./test/comparison.jpg)
