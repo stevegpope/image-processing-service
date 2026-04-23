@@ -6,10 +6,10 @@ This project is a high-scalability, event-driven image processing pipeline built
 
 The system moves away from traditional synchronous "wait-for-response" uploads, instead utilizing an Asynchronous Request-Response Pattern.
 
-Direct-to-S3 Uploads: Client requests a Pre-Signed URL via API Gateway and Lambda, allowing secure, direct uploads to S3 without taxing server memory or bandwidth.
-Event-Driven Triggers: S3 triggers an event upon successful upload, pushing a message into Amazon SQS.
-Decoupled Processing: A dedicated Processor Lambda consumes SQS messages. If processing fails, SQS handles retries automatically without impacting the client.
-State Management & Polling: While the background worker processes the image, the client polls a lightweight DynamoDB table for status updates.
+* Direct-to-S3 Uploads: Client requests a Pre-Signed URL via API Gateway and Lambda, allowing secure, direct uploads to S3 without taxing server memory or bandwidth.
+* Event-Driven Triggers: S3 triggers an event upon successful upload, pushing a message into Amazon SQS.
+* Decoupled Processing: A dedicated Processor Lambda consumes SQS messages. If processing fails, SQS handles retries automatically without impacting the client.
+* State Management & Polling: While the background worker processes the image, the client polls a lightweight DynamoDB table for status updates.
 ---
 ## Architectural Benefits
 
