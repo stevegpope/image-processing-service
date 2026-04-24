@@ -48,3 +48,18 @@ Nothing too fancy, it is just a tech demo.
 
 ## Sample Image
 ![Sample Image](./test/comparison.jpg)
+
+## TODOS
+- CI/CD
+- dev/stg/prod environments
+- Authentication/authorization - currently any user with the imageId can download
+- WAF if malicious traffic is suspected
+- S3 bucket versioning to prevent against accidental deletes
+- Alarms on lambda duration, API 5xx, SQS queue depth
+- Caching on status call
+- Project board for TODO tasks
+
+Prod tier upgrades (not free tier-friendly):  
+- Higher API throttling rate
+- API Gateway logging to detect malicious traffic and problems
+- Longer log retention
