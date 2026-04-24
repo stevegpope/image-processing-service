@@ -13,6 +13,10 @@ resource "aws_lambda_function" "processor" {
   filename         = var.lambda_artifact
   source_code_hash = filebase64sha256("${path.module}/${var.lambda_artifact}")
 
+  snap_start {
+    apply_on = "PublishedVersions"
+  }
+
   environment {
     variables = {
       RAW_BUCKET       = aws_s3_bucket.raw.bucket
@@ -47,6 +51,10 @@ resource "aws_lambda_function" "upload" {
 
   timeout     = 10
   memory_size = 512
+
+  snap_start {
+    apply_on = "PublishedVersions"
+  }
 
   environment {
     variables = {
@@ -87,6 +95,10 @@ resource "aws_lambda_function" "download" {
   timeout     = 10
   memory_size = 512
 
+  snap_start {
+    apply_on = "PublishedVersions"
+  }
+
   environment {
     variables = {
       PROCESSED_BUCKET = aws_s3_bucket.processed.bucket
@@ -126,6 +138,10 @@ resource "aws_lambda_function" "status" {
   timeout     = 10
   memory_size = 512
 
+  snap_start {
+    apply_on = "PublishedVersions"
+  }
+
   environment {
     variables = {
       TABLE_NAME = aws_dynamodb_table.image_status.name
@@ -137,7 +153,6 @@ resource "aws_lambda_function" "status" {
     mode = "Active"
   }
 
-  # Optional but recommended
   ephemeral_storage {
     size = 512
   }
