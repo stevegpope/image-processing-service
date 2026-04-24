@@ -35,6 +35,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "processed_cleanup" {
     id     = "auto-delete-processed-images"
     status = "Enabled"
 
+    filter {}
+
     # Delete objects after 1 day
     expiration {
       days = 1
