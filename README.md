@@ -29,3 +29,37 @@ This approach has several benefits:
 * Compute: AWS Lambda
 * Storage: Amazon S3
 * Messaging: Amazon SQS
+
+---
+## Observability
+
+* Failure Notifications: We use CloudWatch Alarms to immediately flag if the image processor crashes or if messages are piling up in the Dead Letter Queue (DLQ).
+* Proactive Alerting: By monitoring the Errors metric and ApproximateNumberOfMessagesVisible, we know the system has failed before the user even reports it.
+* Log Governance: Dedicated Log Groups for each Lambda function provide deep visibility into execution flow, with a 3-day retention policy to keep CloudWatch costs low while still allowing for effective debugging.
+* Structured Context: Using the custom InvocationContext in our Java code, we ensure every log entry is searchable by imageId (our correlationId), making it easy to trace a single file's journey from upload to completion.
+
+---
+## Image Editing Process
+Nothing too fancy, it is just a tech demo.
+- adjust the intensity range of the image
+- adjust the image brightness/contrast by stretching pixels so 0.35% of them become pure black or white
+- recalculate the display boundaries to ensure the new contrast levels are visible in the final file.
+- increases the value of every single pixel by 15% to globally brighten the image
+
+## Sample Image
+![Sample Image](./test/comparison.jpg)
+
+## TODOS
+- CI/CD
+- dev/stg/prod environments
+- Authentication/authorization - currently any user with the imageId can download
+- WAF if malicious traffic is suspected
+- S3 bucket versioning to prevent against accidental deletes
+- Alarms on lambda duration, API 5xx, SQS queue depth
+- Caching on status call
+- Project board for TODO tasks
+
+Prod tier upgrades (not free tier-friendly):  
+- Higher API throttling rate
+- API Gateway logging to detect malicious traffic and problems
+- Longer log retention
