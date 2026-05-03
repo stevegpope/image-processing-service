@@ -111,7 +111,7 @@ jobs:
           
           DEPLOYMENT_ID=$(aws deploy create-deployment \
             --application-name image-processor-${{ inputs.environment }} \
-            --deployment-group-name image-processor-group \
+            --deployment-group-name image-processor-${{ inputs.environment }}-group \
             --revision "$REVISION" \
             --query 'deploymentId' --output text)
           
