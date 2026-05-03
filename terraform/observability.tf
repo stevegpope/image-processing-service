@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "dlq_messages" {
-  alarm_name          = "${var.project}-dlq-messages"
+  alarm_name          = "${local.name}-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"

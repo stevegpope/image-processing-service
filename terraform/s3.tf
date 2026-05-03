@@ -1,9 +1,9 @@
 resource "aws_s3_bucket" "raw" {
-  bucket = "${var.project}-raw-${random_id.suffix.hex}"
+  bucket = "${local.name}-raw-${random_id.suffix.hex}"
 }
 
 resource "aws_s3_bucket" "processed" {
-  bucket = "${var.project}-processed-${random_id.suffix.hex}"
+  bucket = "${local.name}-processed-${random_id.suffix.hex}"
 }
 
 resource "random_id" "suffix" {

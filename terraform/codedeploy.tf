@@ -5,7 +5,7 @@ resource "aws_codedeploy_app" "lambda" {
 
 resource "aws_codedeploy_deployment_group" "lambda" {
   app_name              = aws_codedeploy_app.lambda.name
-  deployment_group_name = "image-processor-group"
+  deployment_group_name = "${local.name}-group"
   service_role_arn      = aws_iam_role.codedeploy.arn
 
   deployment_config_name = var.environment == "dev" ? "CodeDeployDefault.LambdaAllAtOnce" : "CodeDeployDefault.LambdaCanary10Percent5Minutes"

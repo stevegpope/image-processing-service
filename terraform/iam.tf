@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "logging_base" {
 }
 # Get Upload Url
 resource "aws_iam_role" "upload_role" {
-  name               = "${var.project}-upload-role"
+  name               = "${local.name}-upload-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
@@ -61,7 +61,7 @@ resource "aws_iam_role_policy" "upload_policy_attach" {
 
 # Get Download Url
 resource "aws_iam_role" "download_role" {
-  name               = "${var.project}-download-role"
+  name               = "${local.name}-download-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
@@ -92,7 +92,7 @@ resource "aws_iam_role_policy" "download_policy_attach" {
 
 # Processor
 resource "aws_iam_role" "processor_role" {
-  name               = "${var.project}-processor-role"
+  name               = "${local.name}-processor-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
@@ -144,7 +144,7 @@ resource "aws_iam_role_policy" "processor_policy_attach" {
 
 # Get Status
 resource "aws_iam_role" "status_role" {
-  name               = "${var.project}-status-role"
+  name               = "${local.name}-status-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
@@ -165,7 +165,7 @@ resource "aws_iam_role_policy" "status_policy_attach" {
 }
 
 resource "aws_iam_role" "codedeploy" {
-  name = "codedeploy-lambda-role"
+  name = "${local.name}-codedeploy-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

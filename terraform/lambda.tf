@@ -51,7 +51,7 @@ resource "aws_lambda_event_source_mapping" "sqs_trigger" {
 ############################
 
 resource "aws_lambda_function" "upload" {
-  function_name = "${var.project}-upload"
+  function_name = "${local.name}-upload"
 
   role = aws_iam_role.upload_role.arn
 
@@ -94,7 +94,7 @@ resource "aws_lambda_function" "upload" {
 ############################
 
 resource "aws_lambda_function" "download" {
-  function_name = "${var.project}-download"
+  function_name = "${local.name}-download"
 
   role = aws_iam_role.download_role.arn
 
@@ -137,7 +137,7 @@ resource "aws_lambda_function" "download" {
 ############################
 
 resource "aws_lambda_function" "status" {
-  function_name = "${var.project}-status"
+  function_name = "${local.name}-status"
 
   role = aws_iam_role.status_role.arn
 

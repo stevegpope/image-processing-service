@@ -4,12 +4,12 @@
 ############################
 
 resource "aws_sqs_queue" "dlq" {
-  name                      = "${var.project}-dlq"
+  name                      = "${local.name}-dlq"
   message_retention_seconds = 1209600 # 14 days
 }
 
 resource "aws_sqs_queue" "processing" {
-  name = "${var.project}-processing"
+  name = "${local.name}-processing"
 
   visibility_timeout_seconds = 60
 

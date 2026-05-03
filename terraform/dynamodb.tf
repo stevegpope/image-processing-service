@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "image_status" {
-  name         = "${var.project}-image-status"
+  name         = "${local.name}-image-status"
   billing_mode = "PAY_PER_REQUEST" # Serverless on-demand scaling
   hash_key     = "imageId"
 
@@ -27,7 +27,7 @@ resource "aws_dynamodb_table" "image_status" {
   }
 
   tags = {
-    Environment = "production"
+    Environment = var.environment
     Project     = var.project
   }
 }
