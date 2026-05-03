@@ -39,6 +39,13 @@ public class ProcessImageHandler implements RequestHandler<SQSEvent, String> {
 
             String bodyJson = msg.getBody();
             JsonNode rootNode = objectMapper.readTree(bodyJson);
+
+            // 🟢 Handle S3 Test Events (sent by AWS when configuring notifications)
+            if (rootNode.path("Event").asText().equals("s3:TestEvent")) {
+                ctx.log("Received S3 TestEvent, skipping.");
+                return "SKIPPED_TEST_EVENT";
+            }
+
             imageId = GetImageId(rootNode);
             ctx.setImageId(imageId);
 
@@ -156,12 +163,24 @@ public class ProcessImageHandler implements RequestHandler<SQSEvent, String> {
 
     private String GetImageId(JsonNode rootNode)
     {
-        String objectKey = rootNode.path("Records")
-                .get(0)
+        JsonNode records = rootNode.path("Records");
+        if (records.isMissingNode() || !records.isArray() || records.isEmpty()) {
+            return null;
+        }
+
+        JsonNode objectKeyNode = records.path(0)
                 .path("s3")
                 .path("object")
-                .path("key")
-                .asText();
+                .path("key");
+
+        if (objectKeyNode.isMissingNode()) {
+            return null;
+        }
+
+        String objectKey = objectKeyNode.asText();
+        if (objectKey == null || objectKey.isEmpty() || !objectKey.contains(".")) {
+            return null;
+        }
 
         return objectKey.substring(objectKey.lastIndexOf("/") + 1, objectKey.lastIndexOf("."));
     }
