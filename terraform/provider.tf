@@ -5,7 +5,7 @@ terraform {
     bucket         = "image-processor-terraform-state-634972095615"
     key            = "terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "image-processor-terraform-locks"
+    use_lockfile   = true
     encrypt        = true
   }
 
