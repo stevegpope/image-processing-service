@@ -1,0 +1,127 @@
+name: Reusable Deployment Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      aws_region:
+        required: false
+        type: string
+        default: 'us-east-1'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build artifact
+        run: mvn clean package
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::634972095615:role/github-actions-image-processor
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Workspace Select
+        run: |
+          terraform workspace select ${{ inputs.environment }} || \
+          terraform workspace new ${{ inputs.environment }}
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        id: apply
+        run: |
+          terraform apply \
+            -var="environment=${{ inputs.environment }}" \
+            -var="lambda_artifact=../target/image-processor-1.0.0.jar" \
+            -auto-approve
+          
+          # Export outputs for next steps
+          echo "NEW_VER=$(terraform output -raw processor_version)" >> $GITHUB_ENV
+          echo "FUNC_NAME=$(terraform output -raw processor_function_name)" >> $GITHUB_ENV
+        working-directory: ./terraform
+
+      - name: Trigger CodeDeploy
+        id: codedeploy
+        run: |
+          # Resolve current version from the 'live' alias
+          CURRENT_VER=$(aws lambda get-alias --function-name $FUNC_NAME --name live --query 'FunctionVersion' --output text)
+          
+          echo "Current Version: $CURRENT_VER"
+          echo "New Version: $NEW_VER"
+          
+          if [ "$CURRENT_VER" = "$NEW_VER" ]; then
+            echo "No version change detected. Skipping CodeDeploy."
+            exit 0
+          fi
+          
+          # Use jq to safely construct the revision JSON
+          REVISION=$(jq -n \
+            --arg fn "$FUNC_NAME" \
+            --arg cv "$CURRENT_VER" \
+            --arg tv "$NEW_VER" \
+            '{
+              revisionType: "AppSpecContent",
+              appSpecContent: {
+                content: {
+                  version: "0.0",
+                  Resources: [
+                    {
+                      myLambdaFunction: {
+                        Type: "AWS::Lambda::Function",
+                        Properties: {
+                          Name: $fn,
+                          Alias: "live",
+                          CurrentVersion: $cv,
+                          TargetVersion: $tv
+                        }
+                      }
+                    }
+                  ]
+                } | tojson
+              }
+            }')
+          
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name image-processor-${{ inputs.environment }} \
+            --deployment-group-name image-processor-group \
+            --revision "$REVISION" \
+            --query 'deploymentId' --output text)
+          
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+          echo "Successfully triggered CodeDeploy. ID: $DEPLOYMENT_ID"
+
+      - name: Wait for CodeDeploy Completion
+        if: steps.codedeploy.outputs.deployment_id != ''
+        run: |
+          DEPLOY_ID="${{ steps.codedeploy.outputs.deployment_id }}"
+          echo "Watching deployment $DEPLOY_ID..."
+          aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
+          echo "Deployment successfully completed!"

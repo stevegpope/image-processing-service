@@ -50,8 +50,6 @@ Nothing too fancy, it is just a tech demo.
 ![Sample Image](./test/comparison.jpg)
 
 ## TODOS
-- CI/CD
-- dev/stg/prod environments
 - Authentication/authorization - currently any user with the imageId can download
 - WAF if malicious traffic is suspected
 - S3 bucket versioning to prevent against accidental deletes
@@ -59,7 +57,26 @@ Nothing too fancy, it is just a tech demo.
 - Caching on status call
 - Project board for TODO tasks
 
-Prod tier upgrades (not free tier-friendly):  
+---
+## Deployment
+
+### Local Development (Dev)
+To deploy to the development environment, use the provided PowerShell script:
+```powershell
+./DeployTo-Dev.ps1
+```
+The script handles the Maven build, infrastructure updates via Terraform, and the CodeDeploy traffic shift (AllAtOnce for dev).
+
+### CI/CD
+GitHub Actions workflows handle automated deployments:
+- `.github/workflows/dev.yml`: Deploys to the `dev` environment (AllAtOnce).
+- `.github/workflows/stg.yml`: Deploys to the `stg` environment (10% Canary).
+- `.github/workflows/prod.yml`: Deploys to the `prod` environment (10% Canary).
+
+**Note on AppSpec**: AppSpec configuration is generated dynamically during deployment to handle environment-specific function names and versions. A static `appspec.yml` file is not needed.
+
+---
+## Prod tier upgrades (not free tier-friendly):  
 - Higher API throttling rate
 - API Gateway logging to detect malicious traffic and problems
 - Longer log retention

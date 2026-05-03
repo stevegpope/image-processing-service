@@ -3,7 +3,7 @@
 ############################
 
 resource "aws_lambda_function" "processor" {
-  function_name = "${var.project}-processor"
+  function_name = "${local.name}-processor"
   role          = aws_iam_role.processor_role.arn
   handler       = "org.poe.ProcessImageHandler::handleRequest"
   runtime       = "java17"
@@ -11,7 +11,9 @@ resource "aws_lambda_function" "processor" {
   memory_size   = 1024
 
   filename         = var.lambda_artifact
-  source_code_hash = filebase64sha256("${path.module}/${var.lambda_artifact}")
+  source_code_hash = filebase64sha256(var.lambda_artifact)
+
+  publish = true
 
   snap_start {
     apply_on = "PublishedVersions"
@@ -26,9 +28,21 @@ resource "aws_lambda_function" "processor" {
   }
 }
 
+resource "aws_lambda_alias" "live" {
+  name             = "live"
+  function_name    = aws_lambda_function.processor.function_name
+  function_version = aws_lambda_function.processor.version
+
+  lifecycle {
+    ignore_changes = [
+      function_version,
+    ]
+  }
+}
+
 resource "aws_lambda_event_source_mapping" "sqs_trigger" {
   event_source_arn = aws_sqs_queue.processing.arn
-  function_name    = aws_lambda_function.processor.arn
+  function_name    = aws_lambda_alias.live.arn
   batch_size       = 1
 }
 
@@ -47,7 +61,7 @@ resource "aws_lambda_function" "upload" {
   handler = "org.poe.GetUploadUrlHandler::handleRequest"
 
   filename         = var.lambda_artifact
-  source_code_hash = filebase64sha256("${path.module}/${var.lambda_artifact}")
+  source_code_hash = filebase64sha256(var.lambda_artifact)
 
   timeout     = 10
   memory_size = 512
@@ -90,7 +104,7 @@ resource "aws_lambda_function" "download" {
   handler = "org.poe.GetDownloadUrlHandler::handleRequest"
 
   filename         = var.lambda_artifact
-  source_code_hash = filebase64sha256("${path.module}/${var.lambda_artifact}")
+  source_code_hash = filebase64sha256(var.lambda_artifact)
 
   timeout     = 10
   memory_size = 512
@@ -133,7 +147,7 @@ resource "aws_lambda_function" "status" {
   handler = "org.poe.GetStatusHandler::handleRequest"
 
   filename         = var.lambda_artifact
-  source_code_hash = filebase64sha256("${path.module}/${var.lambda_artifact}")
+  source_code_hash = filebase64sha256(var.lambda_artifact)
 
   timeout     = 10
   memory_size = 512

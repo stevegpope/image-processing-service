@@ -52,16 +52,16 @@ resource "aws_apigatewayv2_stage" "default" {
 }
 
 resource "aws_lambda_permission" "api_invoke" {
-  for_each      = toset([
-    aws_lambda_function.processor.function_name,
-    aws_lambda_function.upload.function_name,
-    aws_lambda_function.download.function_name,
-    aws_lambda_function.status.function_name
-  ])
+  for_each = {
+    processor = aws_lambda_alias.live.arn
+    upload    = aws_lambda_function.upload.function_name
+    download  = aws_lambda_function.download.function_name
+    status    = aws_lambda_function.status.function_name
+  }
 
-  statement_id  = "AllowAPIGatewayInvoke-${each.key}" # Unique ID per function
+  statement_id  = "AllowAPIGatewayInvoke-${each.key}"
   action        = "lambda:InvokeFunction"
-  function_name = each.key
+  function_name = each.value
   principal     = "apigateway.amazonaws.com"
 
   # Restrict to our specific API to prevent other APIs from invoking it

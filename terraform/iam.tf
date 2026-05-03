@@ -163,3 +163,25 @@ resource "aws_iam_role_policy" "status_policy_attach" {
   role   = aws_iam_role.status_role.id
   policy = data.aws_iam_policy_document.status_policy.json
 }
+
+resource "aws_iam_role" "codedeploy" {
+  name = "codedeploy-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "codedeploy.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "codedeploy" {
+  role       = aws_iam_role.codedeploy.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda"
+}
