@@ -71,3 +71,6 @@ terraform/terraform.rc
 
 # Secrets or local config
 .env
+
+# Junie files
+.junie/

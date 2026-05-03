@@ -31,6 +31,13 @@ if (-not (Test-Path $ArtifactPath)) {
 Write-Host "Applying Terraform Infrastructure..." -ForegroundColor Yellow
 Set-Location -Path .\terraform
 
+# Ensure we are in the correct workspace for the environment
+Write-Host "Switching to 'dev' workspace..." -ForegroundColor Gray
+terraform workspace select dev
+if ($LASTEXITCODE -ne 0) {
+    terraform workspace new dev
+}
+
 terraform apply -auto-approve `
   -var="environment=dev" `
   -var="lambda_artifact=$ArtifactPath"
