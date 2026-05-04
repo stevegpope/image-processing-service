@@ -23,7 +23,7 @@ resource "aws_lambda_function" "processor" {
     variables = {
       RAW_BUCKET       = aws_s3_bucket.raw.bucket
       PROCESSED_BUCKET = aws_s3_bucket.processed.bucket
-      TABLE_NAME = aws_dynamodb_table.image_status.name
+      TABLE_NAME       = aws_dynamodb_table.image_status.name
     }
   }
 }
@@ -73,7 +73,7 @@ resource "aws_lambda_function" "upload" {
   environment {
     variables = {
       UPLOAD_BUCKET = aws_s3_bucket.raw.bucket
-      TABLE_NAME = aws_dynamodb_table.image_status.name
+      TABLE_NAME    = aws_dynamodb_table.image_status.name
     }
   }
 
@@ -116,7 +116,7 @@ resource "aws_lambda_function" "download" {
   environment {
     variables = {
       PROCESSED_BUCKET = aws_s3_bucket.processed.bucket
-      TABLE_NAME = aws_dynamodb_table.image_status.name
+      TABLE_NAME       = aws_dynamodb_table.image_status.name
     }
   }
 

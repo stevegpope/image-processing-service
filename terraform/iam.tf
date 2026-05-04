@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "lambda_assume" {
 
 data "aws_iam_policy_document" "logging_base" {
   statement {
-    actions   = [
+    actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "upload_policy" {
   }
 
   statement {
-    actions   = [
+    actions = [
       "dynamodb:PutItem"
     ]
     resources = [aws_dynamodb_table.image_status.arn]
@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "download_policy" {
   }
 
   statement {
-    actions   = [
+    actions = [
       "dynamodb:GetItem"
     ]
     resources = [aws_dynamodb_table.image_status.arn]
@@ -120,7 +120,7 @@ data "aws_iam_policy_document" "processor_policy" {
   }
 
   statement {
-    actions   = [
+    actions = [
       "dynamodb:GetItem",
       "dynamodb:UpdateItem"
     ]
@@ -152,7 +152,7 @@ data "aws_iam_policy_document" "status_policy" {
   source_policy_documents = [data.aws_iam_policy_document.logging_base.json]
 
   statement {
-    actions   = [
+    actions = [
       "dynamodb:GetItem"
     ]
     resources = [aws_dynamodb_table.image_status.arn]
