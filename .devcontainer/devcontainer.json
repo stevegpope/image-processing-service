@@ -33,6 +33,14 @@
 			]
 		}
 	},
-	"postCreateCommand": "pip3 install pre-commit && pre-commit install && tflint --init",
+	"containerEnv": {
+		"ENVIRONMENT": "local",
+		"MOTO_URL": "http://localhost:4566",
+		"AWS_REGION": "us-east-1",
+		"AWS_ACCESS_KEY_ID": "test",
+		"AWS_SECRET_ACCESS_KEY": "test"
+	},
+	"postCreateCommand": "pip3 install pre-commit moto[server] && pre-commit install && tflint --init",
+	"postStartCommand": "moto_server -p 4566 &",
 	"remoteUser": "vscode"
 }

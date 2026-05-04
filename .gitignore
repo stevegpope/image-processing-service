@@ -77,3 +77,4 @@ terraform/terraform.rc
 
 # Test outputs
 test/processed*.jpg
+.output.txt

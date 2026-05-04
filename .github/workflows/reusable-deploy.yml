@@ -125,3 +125,7 @@ jobs:
           echo "Watching deployment $DEPLOY_ID..."
           aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
           echo "Deployment successfully completed!"
+
+      - name: Run Integration Tests
+        run: |
+          mvn verify -Denvironment=${{ inputs.environment }}

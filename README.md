@@ -92,18 +92,25 @@ The hooks include:
 
 ### Integration Testing
 
-An integration test script is provided to verify the end-to-end pipeline (upload -> process -> download).
+A Java-based integration test is provided to verify the end-to-end pipeline (upload -> process -> download).
 
 To run the test against the dev environment:
-```powershell
-./scripts/integration-test.ps1 -Environment dev
+```bash
+mvn verify -Denvironment=dev
 ```
-The script will:
-1. Discover the API Gateway endpoint.
+
+To run against Moto locally (in the Dev Container):
+```bash
+# Moto server starts automatically on port 4566
+mvn verify -Denvironment=local
+```
+
+The test will:
+1. Discover the API Gateway endpoint (or use Moto).
 2. Request a pre-signed upload URL.
 3. Upload `test/test.jpg`.
 4. Poll for processing completion.
-5. Download the result to `test/processed-test.jpg`.
+5. Download the result to `test/processed-test-java.jpg`.
 
 ---
 ## Deployment
