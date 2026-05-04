@@ -94,8 +94,9 @@ public class ImageProcessorIT {
         // 2. UPLOAD IMAGE TO S3
         log.info("[2/5] Uploading image...");
         given()
+                .urlEncodingEnabled(false)
                 .header("Content-Type", "image/jpeg")
-                .body(testImageFile)
+                .body(java.nio.file.Files.readAllBytes(testImageFile.toPath()))
                 .when()
                 .put(uploadS3Url)
                 .then()
@@ -145,6 +146,7 @@ public class ImageProcessorIT {
         // 5. DOWNLOAD RESULT
         log.info("[5/5] Downloading result...");
         byte[] downloadedImage = given()
+                .urlEncodingEnabled(false)
                 .when()
                 .get(downloadUrl)
                 .then()
