@@ -2,8 +2,22 @@ resource "aws_s3_bucket" "raw" {
   bucket = "${local.name}-raw-${random_id.suffix.hex}"
 }
 
+resource "aws_s3_bucket_versioning" "raw_versioning" {
+  bucket = aws_s3_bucket.raw.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket" "processed" {
   bucket = "${local.name}-processed-${random_id.suffix.hex}"
+}
+
+resource "aws_s3_bucket_versioning" "processed_versioning" {
+  bucket = aws_s3_bucket.processed.id
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "random_id" "suffix" {

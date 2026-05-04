@@ -52,20 +52,12 @@ Nothing too fancy, it is just a tech demo.
 ## TODOS
 - Authentication/authorization - currently any user with the imageId can download
 - WAF if malicious traffic is suspected
-- S3 bucket versioning to prevent against accidental deletes
 - Alarms on lambda duration, API 5xx, SQS queue depth
 - Caching on status call
 - Project board for TODO tasks
 
 ---
 ## Deployment
-
-### Local Development (Dev)
-To deploy to the development environment, use the provided PowerShell script:
-```powershell
-./DeployTo-Dev.ps1
-```
-The script handles the Maven build, infrastructure updates via Terraform, and the CodeDeploy traffic shift (AllAtOnce for dev).
 
 ### CI/CD
 GitHub Actions workflows handle automated deployments:
