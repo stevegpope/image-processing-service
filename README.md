@@ -72,6 +72,21 @@ The hooks include:
 
 **Note:** If using `tflint`, you may need to run `tflint --init` to install the AWS plugin.
 
+### Integration Testing
+
+An integration test script is provided to verify the end-to-end pipeline (upload -> process -> download).
+
+To run the test against the dev environment:
+```powershell
+./scripts/integration-test.ps1 -Environment dev
+```
+The script will:
+1. Discover the API Gateway endpoint.
+2. Request a pre-signed upload URL.
+3. Upload `test/test.jpg`.
+4. Poll for processing completion.
+5. Download the result to `test/processed-test.jpg`.
+
 ---
 ## Deployment
 

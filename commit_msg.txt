@@ -1,0 +1,8 @@
+Move and improve integration test script
+
+- Moved test script from test/Test.ps1 to scripts/integration-test.ps1 for better organization.
+- Parameterized the script for environment support (defaulting to dev).
+- Improved API discovery to work with environment-specific names.
+- Updated README with instructions on how to run the new script.
+
+Co-authored-by: Junie <junie@jetbrains.com>
