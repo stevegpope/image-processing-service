@@ -13,7 +13,6 @@
 *.md text eol=lf
 *.sh text eol=lf
 *.bash text eol=lf
-*.ps1 text eol=lf
 *.gitignore text eol=lf
 *.gitattributes text eol=lf
 pom.xml text eol=lf

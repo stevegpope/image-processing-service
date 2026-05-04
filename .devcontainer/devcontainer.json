@@ -7,8 +7,7 @@
 			"tflint": "latest"
 		},
 		"ghcr.io/devcontainers/features/aws-cli:1": "latest",
-		"ghcr.io/devcontainers/features/python:1": "latest",
-		"ghcr.io/devcontainers/features/powershell:1": "latest"
+		"ghcr.io/devcontainers/features/python:1": "latest"
 	},
 	"customizations": {
 		"vscode": {
@@ -20,9 +19,7 @@
 				"vscjava.vscode-java-pack",
 				"hashicorp.terraform",
 				"amazonwebservices.aws-toolkit-vscode",
-				"ms-python.python",
-				"redhat.vscode-xml",
-				"ms-vscode.powershell"
+				"redhat.vscode-xml"
 			]
 		},
 		"jetbrains": {
