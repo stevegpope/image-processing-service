@@ -59,6 +59,24 @@ Nothing too fancy, it is just a tech demo.
 ---
 ## Development
 
+### Dev Container
+
+This project includes a `.devcontainer` configuration for a standardized development environment.
+
+#### Prerequisites
+- **Docker Desktop**: Must be installed and running.
+- **IntelliJ IDEA** (with Dev Containers plugin) or **VS Code** (with Remote Containers extension).
+
+#### Using the Dev Container
+- **IntelliJ IDEA**: Right-click on `devcontainer.json` and select **"Open in Dev Container"**.
+- **VS Code**: Click the green button in the bottom-left corner and select **"Reopen in Container"**.
+
+#### Troubleshooting
+If you see `com.intellij.docker.agent.ApiTaskException: Cannot connect to the Docker daemon`:
+1. Ensure **Docker Desktop** is started.
+2. If using WSL2, ensure Docker is configured to integrate with your distro.
+3. In IntelliJ, check **Settings -> Build, Execution, Deployment -> Docker** and ensure the connection is successful.
+
 ### Pre-commit hooks
 
 This project uses [pre-commit](https://pre-commit.com/) to ensure code quality. To set up:

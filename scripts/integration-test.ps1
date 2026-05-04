@@ -90,7 +90,7 @@ for ($i = 1; $i -le $maxRetries; $i++) {
     try {
         $statusResponse = Invoke-RestMethod -Method Get -Uri $statusUrl
         $status = $statusResponse.status
-        Write-Host "Attempt $i/$maxRetries: Status = $status"
+        Write-Host "Attempt $i/${maxRetries}: Status = $status"
 
         if ($status -eq "COMPLETED") {
             $completed = $true

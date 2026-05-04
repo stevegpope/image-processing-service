@@ -1,0 +1,38 @@
+{
+	"name": "Image Processor Service",
+	"image": "mcr.microsoft.com/devcontainers/java:17",
+	"features": {
+		"ghcr.io/devcontainers/features/terraform:1": {
+			"version": "latest",
+			"tflint": "latest"
+		},
+		"ghcr.io/devcontainers/features/aws-cli:1": "latest",
+		"ghcr.io/devcontainers/features/python:1": "latest",
+		"ghcr.io/devcontainers/features/powershell:1": "latest"
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"java.configuration.updateBuildConfiguration": "automatic",
+				"terraform.languageServer.external": true
+			},
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"hashicorp.terraform",
+				"amazonwebservices.aws-toolkit-vscode",
+				"ms-python.python",
+				"redhat.vscode-xml",
+				"ms-vscode.powershell"
+			]
+		},
+		"jetbrains": {
+			"plugins": [
+				"com.intellij.java",
+				"org.jetbrains.plugins.terraform",
+				"com.amazon.aws.toolkit"
+			]
+		}
+	},
+	"postCreateCommand": "pip3 install pre-commit && pre-commit install && tflint --init",
+	"remoteUser": "vscode"
+}

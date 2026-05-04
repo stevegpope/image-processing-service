@@ -74,3 +74,6 @@ terraform/terraform.rc
 
 # Junie files
 .junie/
+
+# Test outputs
+test/processed*.jpg

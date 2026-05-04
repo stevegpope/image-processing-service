@@ -29,9 +29,12 @@ public class ImageStatusRepository {
         }
 
         this.tableName = tableName;
-        this.dynamoDbClient = DynamoDbClient.builder()
-                .region(Region.US_EAST_2)
-                .build();
+        var builder = DynamoDbClient.builder();
+        String region = System.getenv("AWS_REGION");
+        if (region != null && !region.isEmpty()) {
+            builder.region(Region.of(region));
+        }
+        this.dynamoDbClient = builder.build();
     }
 
     public void createEntry(String imageId, String extension) {
