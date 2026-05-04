@@ -62,7 +62,7 @@ jobs:
             -var="environment=${{ inputs.environment }}" \
             -var="lambda_artifact=../target/image-processor-1.0.0.jar" \
             -auto-approve
-          
+
           # Export outputs for next steps
           echo "NEW_VER=$(terraform output -raw processor_version)" >> $GITHUB_ENV
           echo "FUNC_NAME=$(terraform output -raw processor_function_name)" >> $GITHUB_ENV
@@ -73,15 +73,15 @@ jobs:
         run: |
           # Resolve current version from the 'live' alias
           CURRENT_VER=$(aws lambda get-alias --function-name $FUNC_NAME --name live --query 'FunctionVersion' --output text)
-          
+
           echo "Current Version: $CURRENT_VER"
           echo "New Version: $NEW_VER"
-          
+
           if [ "$CURRENT_VER" = "$NEW_VER" ]; then
             echo "No version change detected. Skipping CodeDeploy."
             exit 0
           fi
-          
+
           # Use jq to safely construct the revision JSON
           REVISION=$(jq -n \
             --arg fn "$FUNC_NAME" \
@@ -108,13 +108,13 @@ jobs:
                 } | tojson
               }
             }')
-          
+
           DEPLOYMENT_ID=$(aws deploy create-deployment \
             --application-name image-processor-${{ inputs.environment }} \
             --deployment-group-name image-processor-${{ inputs.environment }}-group \
             --revision "$REVISION" \
             --query 'deploymentId' --output text)
-          
+
           echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
           echo "Successfully triggered CodeDeploy. ID: $DEPLOYMENT_ID"
 

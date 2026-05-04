@@ -67,4 +67,3 @@ resource "aws_lambda_permission" "api_invoke" {
   # Restrict to our specific API to prevent other APIs from invoking it
   source_arn = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
 }
-

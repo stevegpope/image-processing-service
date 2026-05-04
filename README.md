@@ -57,6 +57,22 @@ Nothing too fancy, it is just a tech demo.
 - Project board for TODO tasks
 
 ---
+## Development
+
+### Pre-commit hooks
+
+This project uses [pre-commit](https://pre-commit.com/) to ensure code quality. To set up:
+1. Install `pre-commit`: `pip install pre-commit`
+2. Install the hooks: `pre-commit install`
+
+The hooks include:
+- Standard file checks (trailing whitespace, end-of-file, YAML/JSON validation)
+- `terraform fmt`
+- `tflint` (configured with the AWS ruleset)
+
+**Note:** If using `tflint`, you may need to run `tflint --init` to install the AWS plugin.
+
+---
 ## Deployment
 
 ### CI/CD
@@ -68,7 +84,7 @@ GitHub Actions workflows handle automated deployments:
 **Note on AppSpec**: AppSpec configuration is generated dynamically during deployment to handle environment-specific function names and versions. A static `appspec.yml` file is not needed.
 
 ---
-## Prod tier upgrades (not free tier-friendly):  
+## Prod tier upgrades (not free tier-friendly):
 - Higher API throttling rate
 - API Gateway logging to detect malicious traffic and problems
 - Longer log retention
