@@ -90,27 +90,43 @@ The hooks include:
 
 **Note:** If using `tflint`, you may need to run `tflint --init` to install the AWS plugin.
 
-### Integration Testing
+## Testing
 
-A Java-based integration test is provided to verify the end-to-end pipeline (upload -> process -> download).
+### Unit Tests
+To run unit tests (using the `maven-surefire-plugin`):
+```bash
+mvn test
+```
 
-To run the test against the dev environment:
+### Integration Tests
+The project includes a comprehensive Java-based integration test (`ImageProcessorIT`) that verifies the end-to-end pipeline using JUnit 5 and Rest Assured.
+
+The test performs the following steps:
+1.  **Discovery**: Dynamically finds the API Gateway endpoint for the target environment.
+2.  **Request Upload URL**: Calls the `/upload-url` endpoint to get a pre-signed S3 URL.
+3.  **Upload**: Uploads `test/test.jpg` directly to S3.
+4.  **Poll Status**: Polls the `/status` endpoint until the image processing is `COMPLETED`.
+5.  **Download**: Requests a download URL and verifies the processed image is accessible.
+
+#### Running against Dev Environment
+Ensure you have active AWS credentials for your `dev` environment.
 ```bash
 mvn verify -Denvironment=dev
 ```
 
-To run against Moto locally (in the Dev Container):
+#### Running against Local (Moto)
+Local testing uses **Moto** to simulate AWS services. This is only supported within the **Dev Container**.
 ```bash
-# Moto server starts automatically on port 4566
+# Moto server starts automatically on port 4566 in the dev container
 mvn verify -Denvironment=local
 ```
+*Note: Running against Moto requires that the infrastructure has been deployed to the local Moto instance (e.g., via Terraform pointed at the local endpoint).*
 
-The test will:
-1. Discover the API Gateway endpoint (or use Moto).
-2. Request a pre-signed upload URL.
-3. Upload `test/test.jpg`.
-4. Poll for processing completion.
-5. Download the result to `test/processed-test-java.jpg`.
+#### Running a Specific Test
+To run only the integration tests without re-running unit tests:
+```bash
+mvn failsafe:integration-test failsafe:verify -Denvironment=dev
+```
 
 ---
 ## Deployment
