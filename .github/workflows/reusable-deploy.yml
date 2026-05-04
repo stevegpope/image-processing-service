@@ -66,7 +66,12 @@ jobs:
           # Export outputs for next steps
           echo "NEW_VER=$(terraform output -raw processor_version)" >> $GITHUB_ENV
           echo "FUNC_NAME=$(terraform output -raw processor_function_name)" >> $GITHUB_ENV
+          echo "VALIDATION_FUNC=$(terraform output -raw validation_function_name)" >> $GITHUB_ENV
         working-directory: ./terraform
+
+      - name: Run Integration Tests
+        run: |
+          mvn verify -Denvironment=${{ inputs.environment }}
 
       - name: Trigger CodeDeploy
         id: codedeploy
@@ -87,6 +92,7 @@ jobs:
             --arg fn "$FUNC_NAME" \
             --arg cv "$CURRENT_VER" \
             --arg tv "$NEW_VER" \
+            --arg vfn "$VALIDATION_FUNC" \
             '{
               revisionType: "AppSpecContent",
               appSpecContent: {
@@ -103,6 +109,11 @@ jobs:
                           TargetVersion: $tv
                         }
                       }
+                    }
+                  ],
+                  Hooks: [
+                    {
+                      BeforeAllowTraffic: $vfn
                     }
                   ]
                 } | tojson
@@ -125,7 +136,3 @@ jobs:
           echo "Watching deployment $DEPLOY_ID..."
           aws deploy wait deployment-successful --deployment-id $DEPLOY_ID
           echo "Deployment successfully completed!"
-
-      - name: Run Integration Tests
-        run: |
-          mvn verify -Denvironment=${{ inputs.environment }}

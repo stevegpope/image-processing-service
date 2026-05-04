@@ -162,12 +162,33 @@ resource "aws_lambda_function" "status" {
     }
   }
 
-  # Helps cold starts a bit + observability
   tracing_config {
     mode = "Active"
   }
 
   ephemeral_storage {
     size = 512
+  }
+}
+
+############################
+# VALIDATION HOOK
+############################
+
+resource "aws_lambda_function" "validation" {
+  function_name = "${local.name}-validation"
+  role          = aws_iam_role.validation_role.arn
+  handler       = "org.poe.CodeDeployHookHandler::handleRequest"
+  runtime       = "java17"
+  timeout       = 30
+  memory_size   = 512
+
+  filename         = var.lambda_artifact
+  source_code_hash = filebase64sha256(var.lambda_artifact)
+
+  environment {
+    variables = {
+      TARGET_FUNCTION_NAME = aws_lambda_function.processor.function_name
+    }
   }
 }

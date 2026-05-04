@@ -5,3 +5,7 @@ output "processor_version" {
 output "processor_function_name" {
   value = aws_lambda_function.processor.function_name
 }
+
+output "validation_function_name" {
+  value = aws_lambda_function.validation.function_name
+}

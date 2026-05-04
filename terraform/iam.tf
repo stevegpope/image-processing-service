@@ -164,6 +164,34 @@ resource "aws_iam_role_policy" "status_policy_attach" {
   policy = data.aws_iam_policy_document.status_policy.json
 }
 
+# Validation Hook
+resource "aws_iam_role" "validation_role" {
+  name               = "${local.name}-validation-role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
+}
+
+data "aws_iam_policy_document" "validation_policy" {
+  source_policy_documents = [data.aws_iam_policy_document.logging_base.json]
+
+  statement {
+    actions = ["lambda:InvokeFunction"]
+    resources = [
+      aws_lambda_function.processor.arn,
+      "${aws_lambda_function.processor.arn}:*"
+    ]
+  }
+
+  statement {
+    actions = ["codedeploy:PutLifecycleEventHookExecutionStatus"]
+    resources = ["*"] # Hook status reporting
+  }
+}
+
+resource "aws_iam_role_policy" "validation_policy_attach" {
+  role   = aws_iam_role.validation_role.id
+  policy = data.aws_iam_policy_document.validation_policy.json
+}
+
 resource "aws_iam_role" "codedeploy" {
   name = "${local.name}-codedeploy-role"
 
