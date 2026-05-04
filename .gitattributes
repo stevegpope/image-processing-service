@@ -1,0 +1,27 @@
+# Set default behavior to handle line endings automatically.
+* text=auto
+
+# Standardize on LF for text files to ensure consistency across dev containers (Linux) and host OS.
+*.java text eol=lf
+*.tf text eol=lf
+*.tfvars text eol=lf
+*.hcl text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.bash text eol=lf
+*.ps1 text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+pom.xml text eol=lf
+
+# Denote binary files.
+*.jpg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.heic binary
+*.jar binary
