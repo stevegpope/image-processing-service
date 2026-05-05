@@ -1,21 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.poe</groupId>
     <artifactId>image-processor</artifactId>
     <version>1.0.0</version>
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <aws.sdk.version>2.30.26</aws.sdk.version>
-        <log4j.version>2.25.4</log4j.version>
+
+        <aws.sdk.version>2.44.0</aws.sdk.version>
+
         <jackson.version>2.18.6</jackson.version>
         <junit.version>5.11.3</junit.version>
         <rest-assured.version>5.5.0</rest-assured.version>
+
+        <log4j.version>2.25.4</log4j.version>
+        <slf4j.version>2.0.13</slf4j.version>
     </properties>
 
-    <!-- Use the BOM to manage AWS SDK versions consistently -->
+    <!-- AWS SDK BOM -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -29,19 +36,21 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- JSON Parsing -->
+
+        <!-- ================= JSON ================= -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- AWS Lambda Core -->
+        <!-- ================= AWS LAMBDA ================= -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
@@ -54,47 +63,45 @@
             <version>3.11.5</version>
         </dependency>
 
-        <!-- AWS SDK v2: Versions are now managed by the BOM (no <version> tags) -->
+        <!-- ================= AWS SDK v2 ================= -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
         </dependency>
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sqs</artifactId>
         </dependency>
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3-event-notifications</artifactId>
         </dependency>
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
         </dependency>
 
-        <!-- API Gateway V2 for test discovery -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>apigatewayv2</artifactId>
-            <scope>test</scope>
+            <artifactId>lambda</artifactId>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>codedeploy</artifactId>
         </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>lambda</artifactId>
-        </dependency>
 
-        <!-- Testing -->
+        <!-- ================= TESTING ================= -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -102,44 +109,64 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ImageJ Library -->
+        <!-- ================= IMAGE PROCESSING ================= -->
         <dependency>
             <groupId>net.imagej</groupId>
             <artifactId>ij</artifactId>
             <version>1.54f</version>
         </dependency>
 
-        <!-- AWS Lambda Log4j2 Support -->
+        <!-- ================= LOGGING (CLEAN STACK) ================= -->
+
+        <!-- SLF4J API (modernized) -->
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-log4j2</artifactId>
-            <version>1.6.0</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+
+        <!-- Log4j2 backend -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+    </dependencies>
 
     <build>
         <plugins>
+
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <!-- Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -153,28 +180,35 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
 
-            <!-- Heavy shading to produce an Uber-JAR for Lambda deployment -->
+            <!-- Uber JAR for Lambda -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
+
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                     </execution>
                 </executions>
+
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>org.poe.YourHandlerClass</mainClass>
+                        </transformer>
+                    </transformers>
+                </configuration>
+
             </plugin>
+
         </plugins>
     </build>
+
 </project>
