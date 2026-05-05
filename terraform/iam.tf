@@ -1,3 +1,13 @@
+locals {
+  lambda_arns = [
+    aws_lambda_function.status.arn,
+    aws_lambda_function.download.arn,
+    aws_lambda_function.processor.arn,
+    aws_lambda_function.upload.arn,
+    aws_lambda_function.validation.arn
+  ]
+}
+
 # Lambda assume role
 data "aws_iam_policy_document" "lambda_assume" {
   statement {
@@ -182,7 +192,7 @@ data "aws_iam_policy_document" "validation_policy" {
   }
 
   statement {
-    actions = ["codedeploy:PutLifecycleEventHookExecutionStatus"]
+    actions   = ["codedeploy:PutLifecycleEventHookExecutionStatus"]
     resources = ["*"] # Hook status reporting
   }
 }
@@ -204,6 +214,21 @@ resource "aws_iam_role" "codedeploy" {
           Service = "codedeploy.amazonaws.com"
         }
         Action = "sts:AssumeRole"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "lambda:GetAlias",
+          "lambda:UpdateAlias",
+          "lambda:GetFunction",
+          "lambda:GetFunctionConfiguration",
+          "lambda:UpdateFunctionConfiguration",
+          "lambda:PublishVersion"
+        ]
+        Resource = flatten([
+          local.lambda_arns,
+          [for arn in local.lambda_arns : "${arn}:*"]
+        ])
       }
     ]
   })
