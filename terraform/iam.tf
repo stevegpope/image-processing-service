@@ -202,19 +202,13 @@ resource "aws_iam_role_policy" "validation_policy_attach" {
   policy = data.aws_iam_policy_document.validation_policy.json
 }
 
-resource "aws_iam_role" "codedeploy" {
-  name = "${local.name}-codedeploy-role"
+resource "aws_iam_role_policy" "codedeploy_lambda" {
+  name = "${local.name}-codedeploy-lambda"
+  role = aws_iam_role.codedeploy.id
 
-  assume_role_policy = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "codedeploy.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      },
       {
         Effect = "Allow"
         Action = [
@@ -229,6 +223,23 @@ resource "aws_iam_role" "codedeploy" {
           local.lambda_arns,
           [for arn in local.lambda_arns : "${arn}:*"]
         ])
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "codedeploy" {
+  name = "${local.name}-codedeploy-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "codedeploy.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
       }
     ]
   })
