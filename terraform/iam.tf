@@ -215,6 +215,7 @@ resource "aws_iam_role_policy" "codedeploy_lambda" {
           "lambda:GetAlias",
           "lambda:UpdateAlias",
           "lambda:GetFunction",
+          "lambda:InvokeFunction",
           "lambda:GetFunctionConfiguration",
           "lambda:UpdateFunctionConfiguration",
           "lambda:PublishVersion"
