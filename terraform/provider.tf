@@ -18,9 +18,23 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.5"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.2"
+    }
   }
 }
 
 provider "aws" {
   region = var.region
+}
+
+# Ensure we do not smash the wrong environment by accident
+resource "null_resource" "workspace_guard" {
+  lifecycle {
+    precondition {
+      condition     = terraform.workspace == var.environment
+      error_message = "Workspace (${terraform.workspace}) must match environment (${var.environment})"
+    }
+  }
 }
